@@ -1,0 +1,17 @@
+{
+  "name": "Word Match - Learning App",
+  "short_name": "Word Match",
+  "description": "A gentle learning app where children match words to images",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f0ebf8",
+  "theme_color": "#a78bfa",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ]
+}
