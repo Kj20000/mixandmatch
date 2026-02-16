@@ -1,5 +1,6 @@
 // iOS Safari requires an initial user-gesture-triggered utterance to "unlock" speechSynthesis.
 let iosUnlocked = false;
+let voicesLoaded = false;
 
 const isIOS = (): boolean =>
   /iPad|iPhone|iPod/.test(navigator.userAgent) ||
@@ -10,17 +11,28 @@ function unlockiOSSpeech(): void {
   iosUnlocked = true;
   if (!('speechSynthesis' in window)) return;
   const synth = window.speechSynthesis;
-  const u = new SpeechSynthesisUtterance('unlock');
-  u.volume = 0;
+  // Create and immediately cancel an utterance to warm up the API
+  const u = new SpeechSynthesisUtterance('');
   synth.speak(u);
-  if (synth.paused) synth.resume();
+  synth.cancel();
 }
 
 // Pre-load voices (iOS loads them lazily)
+function loadVoices(): void {
+  if (voicesLoaded || !('speechSynthesis' in window)) return;
+  const voices = window.speechSynthesis.getVoices();
+  if (voices.length > 0) {
+    voicesLoaded = true;
+  }
+}
+
 if ('speechSynthesis' in window) {
-  window.speechSynthesis.getVoices();
+  // Initial voices load
+  loadVoices();
+  
+  // Listen for voices to load
   window.speechSynthesis.addEventListener?.('voiceschanged', () => {
-    window.speechSynthesis.getVoices();
+    loadVoices();
   });
 }
 
@@ -28,11 +40,18 @@ export function speakWord(word: string, audioUrl?: string): void {
   // Unlock iOS speech on first call (must be in gesture context)
   unlockiOSSpeech();
 
+  // If there's an audio URL, try to play it (falls back to TTS if it fails)
   if (audioUrl) {
     const audio = new Audio(audioUrl);
-    audio.play().catch(() => speakWithSynthesis(word));
+    audio.volume = 1.0;
+    audio.play().catch(() => {
+      // Fallback to speech synthesis if audio fails
+      speakWithSynthesis(word);
+    });
     return;
   }
+  
+  // Use speech synthesis directly
   speakWithSynthesis(word);
 }
 
@@ -41,15 +60,10 @@ function speakWithSynthesis(word: string): void {
 
   const synth = window.speechSynthesis;
   const ios = isIOS();
+  
+  // Cancel any ongoing speech
   if (synth.speaking || synth.pending) {
-    if (ios) {
-      // iOS Safari can drop speech if cancel() and speak() are back-to-back.
-      synth.pause();
-      synth.cancel();
-      synth.resume();
-    } else {
-      synth.cancel();
-    }
+    synth.cancel();
   }
 
   const utterance = new SpeechSynthesisUtterance(word);
@@ -58,19 +72,33 @@ function speakWithSynthesis(word: string): void {
   utterance.volume = 1.0;
   utterance.lang = 'en-US';
 
+  // Try to set an English voice if available
   const voices = synth.getVoices();
   if (voices.length > 0) {
-    const englishVoice = voices.find((v) => v.lang.startsWith('en'));
-    if (englishVoice) utterance.voice = englishVoice;
+    // Prefer English voices
+    const englishVoice = voices.find((v) => v.lang.startsWith('en-US')) ||
+                         voices.find((v) => v.lang.startsWith('en')) ||
+                         voices[0];
+    if (englishVoice) {
+      utterance.voice = englishVoice;
+    }
   }
 
   const speakNow = () => {
-    synth.speak(utterance);
-    if (synth.paused) synth.resume();
+    try {
+      synth.speak(utterance);
+      // On iOS, ensure speech starts
+      if (ios && synth.paused) {
+        synth.resume();
+      }
+    } catch (e) {
+      console.error('Speech synthesis error:', e);
+    }
   };
 
+  // iOS needs a small delay to ensure setup is complete
   if (ios) {
-    setTimeout(speakNow, 0);
+    setTimeout(speakNow, 50);
   } else {
     speakNow();
   }
