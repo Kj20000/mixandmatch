@@ -1,0 +1,120 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    --background: 270 40% 97%;
+    --foreground: 270 30% 20%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 270 30% 20%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 270 30% 20%;
+
+    --primary: 270 60% 70%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 160 45% 80%;
+    --secondary-foreground: 160 40% 20%;
+
+    --muted: 270 20% 92%;
+    --muted-foreground: 270 15% 50%;
+
+    --accent: 30 80% 80%;
+    --accent-foreground: 30 60% 25%;
+
+    --destructive: 0 70% 65%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 270 20% 88%;
+    --input: 270 20% 88%;
+    --ring: 270 60% 70%;
+
+    --radius: 1.25rem;
+
+    --pastel-lavender: 270 60% 88%;
+    --pastel-mint: 160 45% 85%;
+    --pastel-peach: 20 80% 88%;
+    --pastel-sky: 200 70% 88%;
+    --pastel-yellow: 45 80% 88%;
+    --pastel-pink: 340 60% 88%;
+
+    --success: 145 60% 50%;
+    --success-foreground: 0 0% 100%;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 270 30% 10%;
+    --foreground: 270 20% 90%;
+    --card: 270 25% 14%;
+    --card-foreground: 270 20% 90%;
+    --popover: 270 25% 14%;
+    --popover-foreground: 270 20% 90%;
+    --primary: 270 60% 70%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 160 35% 30%;
+    --secondary-foreground: 160 30% 90%;
+    --muted: 270 20% 18%;
+    --muted-foreground: 270 15% 60%;
+    --accent: 30 60% 35%;
+    --accent-foreground: 30 40% 90%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 270 20% 20%;
+    --input: 270 20% 20%;
+    --ring: 270 60% 70%;
+    --pastel-lavender: 270 40% 30%;
+    --pastel-mint: 160 30% 28%;
+    --pastel-peach: 20 50% 30%;
+    --pastel-sky: 200 40% 28%;
+    --pastel-yellow: 45 50% 28%;
+    --pastel-pink: 340 40% 28%;
+    --success: 145 50% 40%;
+    --success-foreground: 0 0% 100%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Quicksand', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    touch-action: manipulation;
+  }
+
+  h1, h2, h3 {
+    font-family: 'Fredoka', sans-serif;
+  }
+}
+
+@layer utilities {
+  .touch-none {
+    touch-action: none;
+  }
+}
